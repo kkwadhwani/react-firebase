@@ -1,25 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+import React, {useState} from "react";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {auth} from "./firebase"
+
+
+
+export default function App(){
+
+
+const [email, setEmail]=useState("")
+const [password, setPassword]=useState("")
+const [successful, setSuccess]=useState("")
+const checkEmail=(e)=>{
+e.preventDefault();
+
+    setEmail(e.target.value)
 }
 
-export default App;
+const checkPassword=(e)=>{
+e.preventDefault()
+setPassword(e.target.value)
+}
+
+const handleAuth=()=>{
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log(user)
+      setSuccess("Your account is registered!")
+      setEmail("")
+      setPassword("")
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+}
+console.log(password, email)
+
+    return(
+        <>
+       <h1>Email/Password Create Account</h1>
+        <input type="text" name="email" placeholder="email" onChange={checkEmail} value={email}/>
+        <input type="text" name="password" placeholder="password" onChange={checkPassword} value={password}/>
+       <button onClick={handleAuth}>Click Here</button>
+
+       <p>{successful}</p>
+    
+        </>
+    )
+}
